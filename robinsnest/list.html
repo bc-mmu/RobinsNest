@@ -1,0 +1,59 @@
+<style type="text/css">
+	.container
+	{
+		position:relative;
+		width:700px;
+	}
+
+    .list 
+	{
+		position:absolute;
+		top:0;
+		left:0;
+		width:500px;
+	}
+	
+	.basket
+	{
+		position:absolute;
+		top:0;
+		right:0;
+		padding:15px;
+		width:200px;
+		background-color:#5F9EA0;
+	}
+	
+	.resize
+	{
+		float:left;
+		margin:0 10px 0 0;
+		height:130px;
+	}
+</style>
+
+<div class="container" ng-controller='shopController'>
+	<div class="list">
+		<p ng-repeat='item in items'>
+			<!-- use the item id to create the URL: -->
+			<img class="resize" ng-src="images/{{item.id}}.jpg"></img> 
+			<a ng-href="#/view/{{item.id}}">{{item.title}}</a><br> 
+			Price: {{item.price | currency:"&pound;"}}<br><br>
+			Quantity: <input ng-model="item.qty" style="width:35px;"></input><br><br> 
+			<button ng-show="item.qty>0 && item.qty<11" ng-click="add(item.id, item.title, item.price, item.qty, $index)">Add to Basket</button><br><br>
+		</p>
+	</div>
+
+	<div class="basket">
+		<h4>Basket</h4>
+		<p ng-repeat='item in basket'>
+			<a ng-href="#/view/{{item.id}}">{{item.title}}</a><br> 
+			Price: {{item.price | currency:"&pound;"}}<br> 
+			Quantity: {{item.qty}} <button ng-click="inc($index)">+</button> <button ng-click="dec($index)">-</button><br>
+			<button ng-click="remove($index)">Remove</button><br> 
+		</p>
+		Sub-Total: {{getSubTotal()| currency:"&pound;"}}<br>
+		Shipping: {{getShipping() | currency:"&pound;"}}<br>
+		Total: {{getTotal()| currency:"&pound;"}}<br>
+		<button ng-show="getTotal()>0" ng-click="order()">Submit Order</button>
+	</div>
+</div>
