@@ -211,14 +211,45 @@ shopModule.controller('shopController',
 		// Add an item to the basket.
 		$scope.add = function(itemID, itemTitle, itemPrice, itemQty, index)
 		{
-			$scope.basket.splice(index, 1); // remove item if it has already been added
-			$scope.basket.push({ id: itemID, title: itemTitle, price: itemPrice, qty: itemQty });
+			// Check that entered quantity is an integer.
+			var intRegex = /^\d+$/;
+			if (intRegex.test(itemQty))
+			{
+				$scope.basket.splice(index, 1); // remove item if it has already been added
+				$scope.basket.push({ id: itemID, title: itemTitle, price: itemPrice, qty: itemQty });
+			}
+			else
+			{
+				alert("Invalid quantity - must contain only numeric characters.");
+			}
 		}
 		
 		// Remove an item from the basket.
 		$scope.remove = function(index)
 		{
 			$scope.basket.splice(index, 1);
+		}
+		
+		// Increment basket item quantity.
+		$scope.inc = function(index)
+		{
+			// Only a maximum of 10 of each item can be ordered.
+			if ($scope.basket[index].qty < 10)
+			{
+				$scope.basket[index].qty++;
+			}
+		}
+		
+		// Decrement basket item quantity.
+		$scope.dec = function(index)
+		{
+			$scope.basket[index].qty--;
+			
+			// Remove item from basket if quantity has been set to zero.
+			if ($scope.basket[index].qty == 0)
+			{
+				$scope.basket.splice(index, 1);
+			}
 		}
 		
 		// Return value of books in basket.
