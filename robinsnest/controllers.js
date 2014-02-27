@@ -215,7 +215,18 @@ shopModule.controller('shopController',
 			var intRegex = /^\d+$/;
 			if (intRegex.test(itemQty))
 			{
-				$scope.basket.splice(index, 1); // remove item if it has already been added
+				// Update quantity if item is already in the basket.
+				var len = $scope.basket.length;
+				for (var i = 0; i < len; i++)
+				{
+					if ($scope.basket[i].id == itemID)
+					{
+						$scope.basket[i].qty = itemQty;
+						return;
+					}
+				}
+				
+				// Item not already in basket, so add it.
 				$scope.basket.push({ id: itemID, title: itemTitle, price: itemPrice, qty: itemQty });
 			}
 			else

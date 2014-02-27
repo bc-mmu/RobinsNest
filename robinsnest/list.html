@@ -20,7 +20,7 @@
 		right:0;
 		padding:15px;
 		width:200px;
-		background-color:#5F9EA0;
+		background-color:#49a7d8;
 	}
 	
 	.resize
@@ -33,7 +33,8 @@
 
 <div class="container" ng-controller='shopController'>
 	<div class="list">
-		<p ng-repeat='item in items'>
+		<input type="search" ng-model="q" placeholder="Search..." />
+		<p ng-repeat='item in items | filter:q'>
 			<!-- use the item id to create the URL: -->
 			<img class="resize" ng-src="images/{{item.id}}.jpg"></img> 
 			<a ng-href="#/view/{{item.id}}">{{item.title}}</a><br> 
@@ -46,10 +47,9 @@
 	<div class="basket">
 		<h4>Basket</h4>
 		<p ng-repeat='item in basket'>
-			<a ng-href="#/view/{{item.id}}">{{item.title}}</a><br> 
-			Price: {{item.price | currency:"&pound;"}}<br> 
-			Quantity: {{item.qty}} <button ng-click="inc($index)">+</button> <button ng-click="dec($index)">-</button><br>
-			<button ng-click="remove($index)">Remove</button><br> 
+			<a ng-href="#/view/{{item.id}}">{{item.title}}</a> x {{item.qty}} @ {{item.price | currency:"&pound;"}}<br>
+			<button ng-click="inc($index)" style="width:35px;">+</button> <button ng-click="dec($index)" style="width:35px;">-</button> 
+			<button ng-click="remove($index)" style="width:75px;">Remove</button><br> 
 		</p>
 		Sub-Total: {{getSubTotal()| currency:"&pound;"}}<br>
 		Shipping: {{getShipping() | currency:"&pound;"}}<br>
