@@ -98,30 +98,18 @@ var items = [
     }
 ];
 
-// basket - an array of objects
-var basket = new Array();
-
-//basket.push({ id: 0, title: "test item1", price: 9.99, qty: 2 });
-//basket.push({ id: 1, title: "test item2", price: 3.49, qty: 5 });
-
-//var data = {
-//   'manager': ["Prateek","Rudresh","Prashant"], 
-//    'employee': ["namit","amit","sushil"], 
-//   'hr': ["priya","seema","nakul"]
-//};
-
 // Create a module:
 //var newsModule = angular.module('newsStories', []);
-var shopModule = angular.module('shopItems', []);
+var shopModule = angular.module('shopItems', ['angularLocalStorage']);
 
-// Set up mappings between our URLs, sub-pages and controllers:
+// Set up mappings between our URLs, sub-pages and controllers.
 function textsRouteConfig($routeProvider)
 {	
     $routeProvider.when('/', {
         controller: listController,
         templateUrl: 'list.html'
     }).
-    // Notice that we parameterise the URL by using a colon in front of the index:
+    // Notice that we parameterise the URL by using a colon in front of the index.
     when('/view/:index', {
         controller: detailController,
         templateUrl: 'detail.html'
@@ -150,7 +138,7 @@ function listController($scope)
     $scope.items = items;
 	
 	// expose all the basket items in order to show listing:
-	$scope.basket = basket;
+	$scope.basket = new Object();
 }
 
 function detailController($scope, $routeParams)
@@ -159,7 +147,7 @@ function detailController($scope, $routeParams)
     $scope.item = items[$routeParams.index];
 }
 
-// Create Shipping service (any module can use it!):
+// Create Shipping service (any module can use it).
 shopModule.factory('Shipping', function() 
 {
 	var shipping = {};
@@ -191,20 +179,20 @@ shopModule.factory('Shipping', function()
 			return shipping.rate2;
 		}
 	}
-	// we finish by returning the helper object:
+	// Finish by returning the helper object.
 	return shipping;
 });
 
-// Add a controller to the shopModule so we can expose functions.
+// Add a controller to the shopModule so we can expose functions to the views.
 shopModule.controller('shopController',
-	function ($scope, Shipping) // add each additional service to the arguments list in this function's signature 
+	function ($scope, Shipping, storage) // add each additional service to the arguments list in this function's signature 
 	{
-		$scope.basket = basket;
+		$scope.basket = storage.get('basket'); //basket;
 		
-		// expose a function for Shipping calculation on the scope:
+		// Expose a function for Shipping calculation on the scope.
 		$scope.getShipping = function()
 		{
-			// use our service to do the calculation:
+			// Use our service to do the calculation.
 			return Shipping.compute($scope);
 		}
 		
@@ -222,12 +210,16 @@ shopModule.controller('shopController',
 					if ($scope.basket[i].id == itemID)
 					{
 						$scope.basket[i].qty = itemQty;
+						storage.clearAll();
+						storage.set('basket', $scope.basket);
 						return;
 					}
 				}
 				
 				// Item not already in basket, so add it.
 				$scope.basket.push({ id: itemID, title: itemTitle, price: itemPrice, qty: itemQty });
+				storage.clearAll();
+				storage.set('basket', $scope.basket);
 			}
 			else
 			{
@@ -239,6 +231,8 @@ shopModule.controller('shopController',
 		$scope.remove = function(index)
 		{
 			$scope.basket.splice(index, 1);
+			storage.clearAll();
+			storage.set('basket', $scope.basket);
 		}
 		
 		// Increment basket item quantity.
@@ -247,8 +241,11 @@ shopModule.controller('shopController',
 			// Only a maximum of 10 of each item can be ordered.
 			if ($scope.basket[index].qty < 10)
 			{
-				$scope.basket[index].qty++;
+				$scope.basket[index].qty++;				
 			}
+			
+			storage.clearAll();
+			storage.set('basket', $scope.basket);
 		}
 		
 		// Decrement basket item quantity.
@@ -259,8 +256,11 @@ shopModule.controller('shopController',
 			// Remove item from basket if quantity has been set to zero.
 			if ($scope.basket[index].qty == 0)
 			{
-				$scope.basket.splice(index, 1);
+				$scope.basket.splice(index, 1);				
 			}
+			
+			storage.clearAll();
+			storage.set('basket', $scope.basket);
 		}
 		
 		// Return value of books in basket.

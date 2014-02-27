@@ -39,7 +39,7 @@
 			<img class="resize" ng-src="images/{{item.id}}.jpg"></img> 
 			<a ng-href="#/view/{{item.id}}">{{item.title}}</a><br> 
 			Price: {{item.price | currency:"&pound;"}}<br><br>
-			Quantity: <input ng-model="item.qty" style="width:35px;"></input><br><br> 
+			Quantity: <input ng-model="item.qty" style="width:35px;"></input><br> 
 			<button ng-show="item.qty>0 && item.qty<11" ng-click="add(item.id, item.title, item.price, item.qty, $index)">Add to Basket</button><br><br>
 		</p>
 	</div>
