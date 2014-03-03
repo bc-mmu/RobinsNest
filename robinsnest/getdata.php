@@ -1,4 +1,6 @@
 <?php
+include_once("dbinfo.php");
+include_once("sanitise.php");
 
 if (isset($_GET['format']))
 {
@@ -33,14 +35,14 @@ else
 $returnData = [];
 
 // Get data from database.
-include_once("dbinfo.php");
 $dbserver = mysql_connect(localhost,$username,$password) or die('Unable to connect to the database: ' . mysql_error());
 mysql_select_db($database) or die("Unable to select database");
 
 $query = "";
 if (isset($_GET['id']))
 {
-	$query = "SELECT * FROM rn_merchandise WHERE id = " . $_GET['id'];
+	$id = sanitiseMySQL($_GET['id']);
+	$query = "SELECT * FROM rn_merchandise WHERE id = " . $id;
 }
 else
 {
@@ -58,6 +60,7 @@ while($r = mysql_fetch_assoc($result))
 $returnData = $rows;
 mysql_close($dbserver);
 
+// Use this to get a single array item.
 /* if (isset($_GET['id']))
 {
 	$id = $_GET['id'];
