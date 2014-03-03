@@ -1,116 +1,18 @@
-// Model (data):
-var items = [
-    {
-        title: "Baseball Cap",
-        description: "A stylish black baseball cap.",
-        price: 9.99,
-		id: 0
-    },
-    {
-        title: "Can Insulator",
-        description: "A stylish white can insulator to keep your can chilled.",
-        price: 3.99,
-		id: 1
-    },
-    {
-        title: "Card Holder",
-        description: "Store all your credit cards in this stylish white card holder.",
-        price: 1.99,
-		id: 2
-    },
-	{
-        title: "Car Flag",
-        description: "A white flag that can be attached to a car.",
-        price: 1.99,
-		id: 3
-    },
-	{
-        title: "Cocktail Shaker",
-        description: "A metallic cocktail shaker.",
-        price: 9.99,
-		id: 4
-    },
-	{
-        title: "Flask",
-        description: "A metallic hip flask.",
-        price: 3.99,
-		id: 5
-    },
-	{
-        title: "Gym Bag",
-        description: "A white gym bag.",
-        price: 9.99,
-		id: 6
-    },
-	{
-        title: "iPad Case",
-        description: "A blue protective case for the iPad tablet.",
-        price: 6.99,
-		id: 7
-    },
-	{
-        title: "Journal",
-        description: "A white bound journal for note taking.",
-        price: 1.99,
-		id: 8
-    },
-	{
-        title: "Key Chain",
-        description: "A white plastic key chain.",
-        price: 1.49,
-		id: 9
-    },
-	{
-        title: "Key Hanger",
-        description: "A white key holder with metal hooks to hang your keys from.",
-        price: 2.49,
-		id: 10
-    },
-	{
-        title: "Mouse Pad",
-        description: "A white mousepad to provide a smooth surface for your mouse.",
-        price: 2.99,
-		id: 11
-    },
-	{
-        title: "Travel Mug",
-        description: "A white travel mug made from insulated plastic to keep your drink warm.",
-        price: 2.99,
-		id: 12
-    },
-	{
-        title: "Trucker Hat",
-        description: "A white and black trucker hat.",
-        price: 2.99,
-		id: 13
-    },
-	{
-        title: "T-Shirt",
-        description: "A stylish white t-shirt.",
-        price: 3.99,
-		id: 14
-    },
-	{
-        title: "Wine Chiller",
-        description: "A metallic wine chiller to keep your wine chilled.",
-        price: 7.99,
-		id: 15
-    }
-];
+// Model (data).
+var items = [];
 
-// Create a module:
-//var newsModule = angular.module('newsStories', []);
-var shopModule = angular.module('shopItems', ['angularLocalStorage']);
+// Create shop module
+var shopModule = angular.module('shopItems', ['angularLocalStorage']); //https://github.com/agrublev/angularLocalStorage
 
-// Set up mappings between our URLs, sub-pages and controllers.
+// Set up mappings between URLs, sub-pages and controllers.
 function textsRouteConfig($routeProvider)
 {	
     $routeProvider.when('/', {
         controller: listController,
         templateUrl: 'list.html'
     }).
-    // Notice that we parameterise the URL by using a colon in front of the index.
-    when('/view/:index', {
+    // Parameterise the URL by using a colon in front of the id.
+    when('/view/:id', {
         controller: detailController,
         templateUrl: 'detail.html'
     }).
@@ -119,39 +21,64 @@ function textsRouteConfig($routeProvider)
     });
 }
 
-// set up our routes so that the shopItems module can find them:
+// Setup routes so that the shopItems module can find them.
 shopModule.config(textsRouteConfig);
 
-// Controllers (not embedded in the module for brevity):
-
-//function dataController($scope, $http)
-//{ 
-//	$http.get('getdata.php?format=json').success(function(data, status, headers, config) 
-//	{
-//		$scope.items = data;
-//	});
-//});
-
-function listController($scope)
+// Controller exposing full item list.
+function listController($scope, $http)
 {
-    // expose all the shop items in order to show listing:	
+	// Get data from server.
+	$http.get('getdata.php?format=json').success(function(data, status, headers, config) 
+	{
+		$scope.items = data;
+	});
+
+    // Expose all the shop items in order to show listing.
     $scope.items = items;
 	
-	// expose all the basket items in order to show listing:
-	$scope.basket = new Object();
+	// Expose all the basket items in order to show basket listing.
+	$scope.basket = new Object(); // basket;
 }
 
-function detailController($scope, $routeParams)
-{	
-    // expose the selected item in order to show details:
-    $scope.item = items[$routeParams.index];
+// Controller exposing a single item.
+function detailController($scope, $routeParams, $http)
+{
+	// Get data from server.
+	$http.get('getdata.php?format=json&id=' + $routeParams.id).success(function(data, status, headers, config) 
+	{
+		$scope.item = data;
+	});
+	
+    // Expose the selected item in order to show details.
+    //$scope.item = items[0];
+	//$scope.item = items[$routeParams.id];
 }
 
-// Create Shipping service (any module can use it).
+// Create SubTotal service.
+shopModule.factory('SubTotal', function() 
+{
+	var subTotal = {};
+
+	subTotal.compute = function($scope) 
+	{
+		var total = 0;
+		var len = $scope.basket.length;
+		for (var i = 0; i < len; i++)
+		{
+			total = total + $scope.basket[i].price * $scope.basket[i].qty;
+		}
+		return total;
+	}
+	// Finish by returning the helper object.
+	return subTotal;
+});
+
+// Create Shipping service.
 shopModule.factory('Shipping', function() 
 {
 	var shipping = {};
-	// we only need to change these 2 lines (if the shipping rates change):
+	
+	// Only need to change these 2 lines if the shipping rates change.
 	shipping.rate1 = 2.50;
 	shipping.rate2 = 6;
 	shipping.compute = function($scope) 
@@ -185,18 +112,12 @@ shopModule.factory('Shipping', function()
 
 // Add a controller to the shopModule so we can expose functions to the views.
 shopModule.controller('shopController',
-	function ($scope, Shipping, storage) // add each additional service to the arguments list in this function's signature 
+	function ($scope, Shipping, SubTotal, storage) // add each additional service to the arguments list in this function's signature 
 	{
-		$scope.basket = storage.get('basket'); //basket;
+		// Fill basket with items from previous visit.
+		$scope.basket = storage.get('basket'); // basket;
 		
-		// Expose a function for Shipping calculation on the scope.
-		$scope.getShipping = function()
-		{
-			// Use our service to do the calculation.
-			return Shipping.compute($scope);
-		}
-		
-		// Add an item to the basket.
+		// Expose a function on the scope to add an item to the basket.
 		$scope.add = function(itemID, itemTitle, itemPrice, itemQty, index)
 		{
 			// Check that entered quantity is an integer.
@@ -223,11 +144,11 @@ shopModule.controller('shopController',
 			}
 			else
 			{
-				alert("Invalid quantity - must contain only numeric characters.");
+				alert("Invalid quantity - value must contain only numeric characters.");
 			}
 		}
 		
-		// Remove an item from the basket.
+		// Expose a function on the scope to remove an item from the basket.
 		$scope.remove = function(index)
 		{
 			$scope.basket.splice(index, 1);
@@ -235,7 +156,7 @@ shopModule.controller('shopController',
 			storage.set('basket', $scope.basket);
 		}
 		
-		// Increment basket item quantity.
+		// Expose a function on the scope to increment basket item quantity.
 		$scope.inc = function(index)
 		{
 			// Only a maximum of 10 of each item can be ordered.
@@ -248,7 +169,7 @@ shopModule.controller('shopController',
 			storage.set('basket', $scope.basket);
 		}
 		
-		// Decrement basket item quantity.
+		// Expose a function on the scope to decrement basket item quantity.
 		$scope.dec = function(index)
 		{
 			$scope.basket[index].qty--;
@@ -263,27 +184,17 @@ shopModule.controller('shopController',
 			storage.set('basket', $scope.basket);
 		}
 		
-		// Return value of books in basket.
+		// Expose a function on the scope to calculate value of all items in basket (excluding shipping).
 		$scope.getSubTotal = function()
 		{
-			var total = 0;
-			var len = $scope.basket.length;
-			for (var i = 0; i < len; i++)
-			{
-				total = total + $scope.basket[i].price * $scope.basket[i].qty;
-			}
-			return total;
+			// Use SubTotal service to do the calculation.
+			return SubTotal.compute($scope);
 		}
 		
-		// Return value of books in basket plus total shipping.
-		$scope.getTotal = function()
+		// Expose a function on the scope to calculate shipping.
+		$scope.getShipping = function()
 		{
-			var total = 0;
-			var len = $scope.basket.length;
-			for (var i = 0; i < len; i++)
-			{
-				total = total + $scope.basket[i].price * $scope.basket[i].qty;
-			}
-			return total + Shipping.compute($scope);
+			// Use shipping service to do the calculation.
+			return Shipping.compute($scope);
 		}
 	});

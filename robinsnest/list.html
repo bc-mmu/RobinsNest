@@ -1,36 +1,3 @@
-<style type="text/css">
-	.container
-	{
-		position:relative;
-		width:700px;
-	}
-
-    .list 
-	{
-		position:absolute;
-		top:0;
-		left:0;
-		width:500px;
-	}
-	
-	.basket
-	{
-		position:absolute;
-		top:0;
-		right:0;
-		padding:15px;
-		width:200px;
-		background-color:#49a7d8;
-	}
-	
-	.resize
-	{
-		float:left;
-		margin:0 10px 0 0;
-		height:130px;
-	}
-</style>
-
 <div class="container" ng-controller='shopController'>
 	<div class="list">
 		<input type="search" ng-model="q" placeholder="Search..." />
@@ -51,9 +18,9 @@
 			<button ng-click="inc($index)" style="width:35px;">+</button> <button ng-click="dec($index)" style="width:35px;">-</button> 
 			<button ng-click="remove($index)" style="width:75px;">Remove</button><br> 
 		</p>
-		Sub-Total: {{getSubTotal()| currency:"&pound;"}}<br>
+		Sub-Total: {{getSubTotal() | currency:"&pound;"}}<br>
 		Shipping: {{getShipping() | currency:"&pound;"}}<br>
-		Total: {{getTotal()| currency:"&pound;"}}<br>
+		Total: {{getSubTotal() + getShipping() | currency:"&pound;"}}<br>
 		<button ng-show="getTotal()>0" ng-click="order()">Submit Order</button>
 	</div>
 </div>
