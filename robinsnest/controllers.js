@@ -1,4 +1,4 @@
-// Model (data).
+// Model (data - will be populated by listController or detailController).
 var items = [];
 
 // Create shop module
@@ -44,14 +44,11 @@ function listController($scope, $http)
 function detailController($scope, $routeParams, $http)
 {
 	// Get data from server.
-	$http.get('getdata.php?format=json&id=' + $routeParams.id).success(function(data, status, headers, config) 
+	var url = 'getdata.php?format=json&id=' + $routeParams.id;
+	$http.get(url).success(function(data, status, headers, config) 
 	{
-		$scope.item = data;
+		$scope.item = data[0]; // Expose the selected item to show details.
 	});
-	
-    // Expose the selected item in order to show details.
-    //$scope.item = items[0];
-	//$scope.item = items[$routeParams.id];
 }
 
 // Create SubTotal service.
