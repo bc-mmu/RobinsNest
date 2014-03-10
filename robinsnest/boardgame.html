@@ -1,0 +1,115 @@
+<!doctype html> 
+<html> 
+
+<head> 
+<title>Canvas</title> 
+<script src="halmaArchive - original.js"></script>
+<script src="jquery-1.10.2.min.js"></script> 
+<script src="threejs/build/three.min.js"></script>
+<script src="OrbitControls.js"></script>
+
+</head> 
+
+<body>
+
+<div id='gameArea'>
+
+</div>
+<span id="halmamovecount">0</span> 
+<script>
+
+$(document).ready(function() { 
+	initGame(document.getElementById("halmacanvas"),document.getElementById("halmamovecount"));
+	
+	var camera, scene, renderer;
+    var geometry, material, mesh;
+
+    init();
+    animate();
+
+    function init() {
+	
+	//scene = new THREE.Scene();
+	
+	//camera = new THREE.PerspectiveCamera(70,1024/768,1,1000);
+	//camera.position.z = 1000;
+	
+	//cubeGeometry = new THREE.CubeGeometry(500,500,500);
+	
+	//cube = new THREE.Mesh(cubeGeometry, new THREE.MeshBasicMaterial( { color: Math.random() * 0xffffff, opacity: 0.5 } ));
+	
+	//scene.add(cube);
+	//scene.add(camera);
+	//projector = new THREE.Projector();
+	//renderer = new THREE.CanvasRenderer();
+	//renderer.setSize(window.innerWidth,window.innerHeight);
+	
+	
+	//renderer.render(scene,camera);
+	//document.body.appendChild(renderer.domElement);
+	}
+	
+	
+	
+});
+
+
+</script>
+
+<script>
+
+	var camera, scene, renderer;
+    var geometry, material, mesh;
+
+	
+	
+    init();
+    animate();
+
+    function init() {
+
+        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+        camera.position.z = 1000;
+
+        scene = new THREE.Scene();
+
+        geometry = new THREE.CubeGeometry( 200, 200, 200 );
+        material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+
+        //mesh = new THREE.Mesh(new THREE.CylinderGeometry(100, 100, 50, 50, 50, false), material);;
+        //scene.add( mesh );
+
+        renderer = new THREE.CanvasRenderer();
+        renderer.setSize( window.innerWidth, window.innerHeight );
+
+        document.body.appendChild( renderer.domElement );
+
+    }
+
+    function animate() {
+
+        // note: three.js includes requestAnimationFrame shim
+        requestAnimationFrame( animate );
+
+		camera.lookAt( scene.position );
+		renderer.render( scene, camera );
+
+    }
+
+	function render() {
+		renderer.render(scene,camera);
+	}
+	
+</script>
+
+
+<form>
+	<!--<input type="hfirstPoint" value="true"/> -->
+</form> <input type="hidden" id="rotateCount" value = "0"/>
+<input type="hidden" id="cameraMoving" value="false"/>
+<br />
+
+
+</body> 
+
+</html>
