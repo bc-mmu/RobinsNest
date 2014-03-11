@@ -1,7 +1,13 @@
+body
+{
+  background:#ffffff;
+  border:0px;
+}
+
 .container
 {
   position:relative;
-  width:700px;
+  min-width:700px;
 }
 
 .list 
@@ -9,16 +15,16 @@
   position:absolute;
   top:0;
   left:0;
-  width:500px;
+  min-width: 500px;
 }
 	
 .basket
 {
   position:absolute;
-  top:0;
+  top:50px;
   right:0;
   padding:15px;
-  width:200px;
+  width:280px;
   background-color:#49a7d8;
 }
 

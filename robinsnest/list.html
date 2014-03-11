@@ -15,8 +15,8 @@
 		<h4>Basket</h4>
 		<p ng-repeat='item in basket'>
 			<a ng-href="#/view/{{item.id}}">{{item.title}}</a> x {{item.qty}} @ {{item.price | currency:"&pound;"}}<br>
-			<button ng-click="inc($index)" style="width:35px;">+</button> <button ng-click="dec($index)" style="width:35px;">-</button> 
-			<button ng-click="remove($index)" style="width:75px;">Remove</button><br> 
+			<button ng-click="inc($index)" style="width:35px;">+</button><button ng-click="dec($index)" style="width:35px;">-</button>
+			<button ng-click="remove($index)" style="width:100px;">Remove</button><br>
 		</p>
 		Sub-Total: {{getSubTotal() | currency:"&pound;"}}<br>
 		Shipping: {{getShipping() | currency:"&pound;"}}<br>

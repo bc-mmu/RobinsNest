@@ -58,6 +58,12 @@ shopModule.factory('SubTotal', function()
 
 	subTotal.compute = function($scope) 
 	{
+		// Return zero if nothing added to basket yet.
+		if ($scope.basket == null)
+		{
+			return 0;
+		}
+		
 		var total = 0;
 		var len = $scope.basket.length;
 		for (var i = 0; i < len; i++)
@@ -80,6 +86,12 @@ shopModule.factory('Shipping', function()
 	shipping.rate2 = 6;
 	shipping.compute = function($scope) 
 	{
+		// Return zero if nothing added to basket yet.
+		if ($scope.basket == null)
+		{
+			return 0;
+		}
+		
 		// Get number of items to be shipped.		
 		var itemCount = 0;
 		var len = $scope.basket.length;
@@ -121,23 +133,34 @@ shopModule.controller('shopController',
 			var intRegex = /^\d+$/;
 			if (intRegex.test(itemQty))
 			{
-				// Update quantity if item is already in the basket.
-				var len = $scope.basket.length;
-				for (var i = 0; i < len; i++)
+				// Initialise basket array and add item if no items yet added to basket.
+				if ($scope.basket == null)
 				{
-					if ($scope.basket[i].id == itemID)
-					{
-						$scope.basket[i].qty = itemQty;
-						storage.clearAll();
-						storage.set('basket', $scope.basket);
-						return;
-					}
+					$scope.basket = new Array();
+					$scope.basket.push({ id: itemID, title: itemTitle, price: itemPrice, qty: itemQty });
+					storage.clearAll();
+					storage.set('basket', $scope.basket);
 				}
-				
-				// Item not already in basket, so add it.
-				$scope.basket.push({ id: itemID, title: itemTitle, price: itemPrice, qty: itemQty });
-				storage.clearAll();
-				storage.set('basket', $scope.basket);
+				else // Update quantity if item is already in the basket.
+				{
+					var len = $scope.basket.length;
+					for (var i = 0; i < len; i++)
+					{
+						if ($scope.basket[i].id == itemID)
+						{
+							// Item already in basket, so update quantity.
+							$scope.basket[i].qty = itemQty;
+							storage.clearAll();
+							storage.set('basket', $scope.basket);
+							return;
+						}
+					}
+					
+					// Item not already in basket, so add it.
+					$scope.basket.push({ id: itemID, title: itemTitle, price: itemPrice, qty: itemQty });
+					storage.clearAll();
+					storage.set('basket', $scope.basket);
+				}
 			}
 			else
 			{

@@ -1,6 +1,7 @@
 <html ng-app="shopItems">
 
 <head>
+	<link rel="stylesheet" type="text/css" href="styles.css">
 	<link rel="stylesheet" type="text/css" href="style1.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
 	<script type="text/javascript" src="angular-cookies.min.js"></script>
@@ -10,7 +11,12 @@
 
 <body>
     <!-- View -->
-    <h3>Robin's Nest Merchandise</h3>
+	<table style="width:100%">
+	<tr>
+	  <td><h3>Robin's Nest Merchandise</h3></td>
+	  <td><ul class='menu'><li><a href='index.php'>Home</a></li></ul></td>
+	</tr>
+	</table>
     <div ng-view></div>
 </body>
 
